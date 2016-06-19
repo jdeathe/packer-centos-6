@@ -50,9 +50,9 @@
         ["modifyvm","{{.Name}}","--videocap","off"]
       ],
       "vboxmanage_post": [
-       ["modifyvm","{{.Name}}","--vrde","off"],
-       ["storagectl","{{.Name}}","--name","IDE Controller","--remove"],
-       ["storagectl","{{.Name}}","--name","SATA Controller","--hostiocache","off"]
+        ["modifyvm","{{.Name}}","--vrde","off"],
+        ["storagectl","{{.Name}}","--name","IDE Controller","--remove"],
+        ["storagectl","{{.Name}}","--name","SATA Controller","--hostiocache","off"]
       ]
     }
   ],
@@ -68,6 +68,26 @@
       "output": "builds/{{.BuildName}}-{{.Provider}}.box",
       "compression_level": 9,
       "keep_input_artifact": false
+    },
+    {
+      "type": "atlas",
+      "only": ["centos-6"],
+      "artifact": "jdeathe/centos-6",
+      "artifact_type": "vagrant.box",
+      "metadata": {
+        "provider": "virtualbox",
+        "version": "6.8.0"
+      }
+    },
+    {
+      "type": "atlas",
+      "only": ["centos-6"],
+      "artifact": "jdeathe/centos-6",
+      "artifact_type": "virtualbox.image",
+      "metadata": {
+        "provider": "virtualbox",
+        "created_at": "{{timestamp}}"
+      }
     }
   ],
   "provisioners": [
