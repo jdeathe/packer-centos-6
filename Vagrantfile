@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 
 $image_version = "6.8.0"
+$share_home = false
 $vm_cpus = 1
 $vm_gui = false
 $vm_memory = 512
@@ -38,9 +39,12 @@ Vagrant.configure(2) do |config|
 
   # Disable the default Vagrant directory sync
   config.vm.synced_folder ".", "/home/vagrant/sync", disabled: true
+  config.vm.synced_folder ".", "/vagrant", disabled: true
 
   # Enable NFS shared home directory
-  # config.vm.synced_folder ENV['HOME'], ENV['HOME'], id: "home", :nfs => true, :mount_options => ["nolock","vers=3","udp"]
+  if $share_home
+    config.vm.synced_folder ENV['HOME'], ENV['HOME'], id: "home", :nfs => true, :mount_options => ["nolock","vers=3","udp"]
+  end
 
   # VirtualBox Guest customisations
   config.vm.provider "virtualbox" do |vb|
