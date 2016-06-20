@@ -1,6 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+$image_version = "6.8.0"
 $vm_cpus = 1
 $vm_gui = false
 $vm_memory = 512
@@ -8,11 +9,12 @@ $vm_name = "centos-6"
 $vm_hostname = "centos-6.local"
 
 Vagrant.configure(2) do |config|
-  config.vm.provider "virtualbox"
   config.vm.box = "jdeathe/centos-6"
+  config.vm.box_url = "https://atlas.hashicorp.com/jdeathe/boxes/centos-6/versions/%s/providers/virtualbox.box" % $image_version
 
   config.vm.define $vm_name
   config.vm.hostname = $vm_hostname
+  config.vm.provider "virtualbox"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
