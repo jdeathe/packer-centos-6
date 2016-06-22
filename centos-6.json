@@ -65,6 +65,7 @@
     },
     {
       "type": "vagrant",
+      "vagrantfile_template": "centos-6.vagrantfile",
       "output": "builds/{{.BuildName}}-{{.Provider}}.box",
       "compression_level": 9,
       "keep_input_artifact": false
