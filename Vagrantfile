@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$box_version = "6.8.1"
+$box_version = "6.8.2"
 $share_home = false
 $vm_cpus = 1
 $vm_gui = false
