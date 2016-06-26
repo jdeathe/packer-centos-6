@@ -75,7 +75,9 @@
     {
       "type": "shell",
       "inline": [
-        "/usr/bin/sudo /bin/sed -i -e 's~^PasswordAuthentication yes~PasswordAuthentication no~g' /etc/ssh/sshd_config"
+        "/usr/bin/sudo /bin/sed -i -e 's~^PasswordAuthentication yes~PasswordAuthentication no~g' /etc/ssh/sshd_config",
+        "/usr/bin/sudo /bin/find /var/log -type f | /usr/bin/xargs -I {} /usr/bin/sudo /usr/bin/truncate -s 0 {}",
+        "/usr/bin/sudo /bin/bash -c '/bin/dd if=/dev/zero of=/zero.out bs=1M; /bin/sync; /bin/rm -f /zero.out'"
       ]
     }
   ]
