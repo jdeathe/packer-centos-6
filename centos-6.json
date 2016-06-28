@@ -74,10 +74,11 @@
   "provisioners": [
     {
       "type": "shell",
+      "execute_command": "chmod +x {{ .Path }}; env {{ .Vars }} /usr/bin/sudo -E /bin/bash {{ .Path }}",
       "inline": [
-        "/usr/bin/sudo /bin/sed -i -e 's~^PasswordAuthentication yes~PasswordAuthentication no~g' /etc/ssh/sshd_config",
-        "/usr/bin/sudo /bin/find /var/log -type f | /usr/bin/xargs -I {} /usr/bin/sudo /usr/bin/truncate -s 0 {}",
-        "/usr/bin/sudo /bin/bash -c '/bin/dd if=/dev/zero of=/zero.out bs=1M; /bin/sync; /bin/rm -f /zero.out'"
+        "/bin/sed -i -e 's~^PasswordAuthentication yes~PasswordAuthentication no~g' /etc/ssh/sshd_config",
+        "/bin/find /var/log -type f | /usr/bin/xargs -I {} /usr/bin/sudo /usr/bin/truncate -s 0 {}",
+        "/bin/bash -c '/bin/dd if=/dev/zero of=/zero.out bs=1M; /bin/sync; /bin/rm -f /zero.out'"
       ]
     }
   ]
