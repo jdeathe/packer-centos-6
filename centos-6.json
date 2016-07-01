@@ -33,7 +33,7 @@
       "virtualbox_version_file": ".vbox_version",
       "vm_name": "centos-6",
       "vboxmanage": [
-        ["modifyvm","{{.Name}}","--memory","512"],
+        ["modifyvm","{{.Name}}","--memory","1024"],
         ["modifyvm","{{.Name}}","--vram","12"],
         ["modifyvm","{{.Name}}","--cpus","1"],
         ["modifyvm","{{.Name}}","--hpet","on"],
@@ -50,6 +50,7 @@
         ["modifyvm","{{.Name}}","--videocap","off"]
       ],
       "vboxmanage_post": [
+        ["modifyvm","{{.Name}}","--memory","512"],
         ["modifyvm","{{.Name}}","--vrde","off"],
         ["storagectl","{{.Name}}","--name","IDE Controller","--remove"],
         ["storagectl","{{.Name}}","--name","SATA Controller","--hostiocache","off"]
@@ -113,6 +114,11 @@
         "  /usr/bin/truncate -s 0 {}",
         "/bin/echo '--> Emptying temporary directories.'",
         "/bin/rm -rf /{root,tmp,var/cache/{ldconfig,yum}}/*",
+        "/bin/echo '--> Zero out and reset swap.'",
+        "SWAP_DEVICE=$(readlink -f /dev/disk/by-uuid/$(/sbin/blkid -l -o value -s UUID -t TYPE=swap))",
+        "/sbin/swapoff -a",
+        "/bin/dd if=/dev/zero of=${SWAP_DEVICE} bs=1M",
+        "/sbin/mkswap -f ${SWAP_DEVICE}",
         "/bin/echo '--> Zero out any remaining free disk space.'",
         "/bin/dd if=/dev/zero of=/boot/zero.out bs=1M &",
         "/bin/dd if=/dev/zero of=/zero.out bs=1M",
