@@ -1,4 +1,8 @@
 {
+  "variables": {
+    "ssh_username": "centos",
+    "ssh_password": "centos"
+  },
   "builders": [
     {
       "type": "virtualbox-iso",
@@ -24,8 +28,8 @@
       ],
       "iso_checksum_type": "sha256",
       "iso_checksum": "ec49c297d484b9da0787e5944edc38f7c70f21c0f6a60178d8e9a8926d1949f4",
-      "ssh_username": "centos",
-      "ssh_password": "centos",
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_password": "{{user `ssh_password`}}",
       "ssh_port": 22,
       "ssh_wait_timeout": "10m",
       "shutdown_command": "/usr/bin/sudo /sbin/shutdown -q -P now",
@@ -77,7 +81,7 @@
       "type": "shell",
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /usr/bin/sudo -E /bin/bash {{ .Path }}",
       "inline_shebang": "/bin/bash -e",
-      "remote_folder": "/home/centos",
+      "remote_folder": "/home/{{user `ssh_username`}}",
       "skip_clean": false,
       "inline": [
         "/bin/echo '--> Disabling SSH password authentication.'",
