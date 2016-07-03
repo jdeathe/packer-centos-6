@@ -82,6 +82,16 @@
   ],
   "provisioners": [
     {
+      "type": "shell-local",
+      "execute_command": [ "/bin/bash", "-c", "{{.Command}}" ],
+      "command": "cp -pf centos-6.vagrantfile .tmp/centos-6.vagrantfile"
+    },
+    {
+      "type": "shell-local",
+      "execute_command": [ "/bin/bash", "-c", "{{.Command}}" ],
+      "command": "sed -e 's~[{][{]user `ssh_user`[}][}]~{{user `ssh_user`}}~g' .tmp/centos-6.vagrantfile > centos-6.vagrantfile"
+    },
+    {
       "type": "shell",
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
       "inline_shebang": "/bin/bash -e",
@@ -160,6 +170,11 @@
         "/bin/find /{,boot} -name zero.out -delete",
         "/bin/echo '--> Provisioning complete.'"
       ]
+    },
+    {
+      "type": "shell-local",
+      "execute_command": [ "/bin/bash", "-c", "{{.Command}}" ],
+      "command": "mv -f .tmp/centos-6.vagrantfile centos-6.vagrantfile"
     }
   ]
 }

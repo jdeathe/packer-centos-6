@@ -4,7 +4,7 @@
 Vagrant.configure(2) do |config|
 
   # Set the user for SSH access
-  config.ssh.username = "centos"
+  config.ssh.username = "{{user `ssh_user`}}"
 
   config.vm.network "forwarded_port", 
     guest: 22, 
