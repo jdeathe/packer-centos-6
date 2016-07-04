@@ -168,6 +168,8 @@
         "/bin/dd if=/dev/zero of=/boot/zero.out bs=1M &",
         "/bin/dd if=/dev/zero of=/zero.out bs=1M",
         "/bin/find /{,boot} -name zero.out -delete",
+        "/bin/echo '--> Locking root account.'",
+        "/usr/sbin/usermod -L root",
         "/bin/echo '--> Provisioning complete.'"
       ]
     },
