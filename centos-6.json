@@ -72,25 +72,58 @@
       "compression_level": 9,
       "keep_input_artifact": false
     },
+    [
+      {
+        "type": "artifice",
+        "files": [
+          "centos-6.vagrantfile"
+        ]
+      },
+      {
+        "type": "shell-local",
+        "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+        "inline_shebang": "/bin/bash -e",
+        "inline": [
+          "if [[ ! -d .tmp ]]; then",
+          "   mkdir .tmp",
+          "fi",
+          "if [[ -n ${1} ]] && [[ -f ${1} ]]; then",
+          "  echo '--> Generating Vagrantfile template.'",
+          "  cp -pf ${1} .tmp/${1}",
+          "  sed -e 's~[{][{]user `ssh_user`[}][}]~{{user `ssh_user`}}~g' .tmp/${1} > ${1}",
+          "fi"
+        ]
+      }
+    ],
     {
       "type": "vagrant",
       "vagrantfile_template": "centos-6.vagrantfile",
       "output": "builds/{{.BuildName}}-{{.Provider}}.box",
       "compression_level": 9,
       "keep_input_artifact": false
-    }
+    },
+    [
+      {
+        "type": "artifice",
+        "files": [
+          ".tmp/centos-6.vagrantfile"
+        ]
+      },
+      {
+        "type": "shell-local",
+        "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+        "inline_shebang": "/bin/bash -e",
+        "inline": [
+          "if [[ -n ${1} ]] && [[ -f ${1} ]]; then",
+          "  echo '--> Restoring Vagrantfile template.'",
+          "  mv -f ${1} .",
+          "fi"
+        ],
+        "keep_input_artifact": false
+      }
+    ]
   ],
   "provisioners": [
-    {
-      "type": "shell-local",
-      "execute_command": [ "/bin/bash", "-c", "{{.Command}}" ],
-      "command": "cp -pf centos-6.vagrantfile .tmp/centos-6.vagrantfile"
-    },
-    {
-      "type": "shell-local",
-      "execute_command": [ "/bin/bash", "-c", "{{.Command}}" ],
-      "command": "sed -e 's~[{][{]user `ssh_user`[}][}]~{{user `ssh_user`}}~g' .tmp/centos-6.vagrantfile > centos-6.vagrantfile"
-    },
     {
       "type": "shell",
       "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
@@ -172,11 +205,6 @@
         "/usr/sbin/usermod -L root",
         "/bin/echo '--> Provisioning complete.'"
       ]
-    },
-    {
-      "type": "shell-local",
-      "execute_command": [ "/bin/bash", "-c", "{{.Command}}" ],
-      "command": "mv -f .tmp/centos-6.vagrantfile centos-6.vagrantfile"
     }
   ]
 }
