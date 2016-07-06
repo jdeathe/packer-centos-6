@@ -117,9 +117,10 @@
           "if [[ -n ${1} ]] && [[ -f ${1} ]]; then",
           "  echo '--> Restoring Vagrantfile template.'",
           "  mv -f ${1} .",
-          "fi"
-        ],
-        "keep_input_artifact": false
+          "fi",
+          "echo '--> Cleanup output directories.'",
+          "find . -mindepth 1 -maxdepth 1 -type d -name output-* -exec rm -rf '{}' +"
+        ]
       }
     ]
   ],
