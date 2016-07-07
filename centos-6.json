@@ -132,6 +132,12 @@
       "remote_folder": "/var/tmp",
       "skip_clean": false,
       "inline": [
+        "/bin/echo '--> Installing packages.'",
+        "/usr/bin/yum -y install \\",
+        "  tuned",
+        "/sbin/chkconfig tuned on",
+        "/usr/bin/tuned-adm profile \\",
+        "  virtual-guest",
         "/bin/echo '--> Configuring SSH.'",
         "/bin/sed -i \\",
         "  -e 's~^PasswordAuthentication yes~PasswordAuthentication no~g' \\",
