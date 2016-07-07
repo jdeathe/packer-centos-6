@@ -1,4 +1,12 @@
 {
+  "variables": {
+    "ssh_user": "vagrant",
+    "ssh_user_authorized_keys": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key",
+    "ssh_user_home": "/home/vagrant",
+    "ssh_user_password": "vagrant",
+    "ssh_user_shell": "/bin/bash",
+    "ssh_user_sudo": "ALL=(ALL) NOPASSWD: ALL"
+  },
   "builders": [
     {
       "type": "virtualbox-iso",
@@ -24,7 +32,7 @@
       ],
       "iso_checksum_type": "sha256",
       "iso_checksum": "ec49c297d484b9da0787e5944edc38f7c70f21c0f6a60178d8e9a8926d1949f4",
-      "ssh_username": "vagrant",
+      "ssh_username": "root",
       "ssh_password": "vagrant",
       "ssh_port": 22,
       "ssh_wait_timeout": "10m",
@@ -64,26 +72,98 @@
       "compression_level": 9,
       "keep_input_artifact": false
     },
+    [
+      {
+        "type": "artifice",
+        "files": [
+          "centos-6.vagrantfile"
+        ]
+      },
+      {
+        "type": "shell-local",
+        "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+        "inline_shebang": "/bin/bash -e",
+        "inline": [
+          "if [[ ! -d .tmp ]]; then",
+          "   mkdir .tmp",
+          "fi",
+          "if [[ -n ${1} ]] && [[ -f ${1} ]]; then",
+          "  echo '--> Generating Vagrantfile template.'",
+          "  cp -pf ${1} .tmp/${1}",
+          "  sed -e 's~[{][{]user `ssh_user`[}][}]~{{user `ssh_user`}}~g' .tmp/${1} > ${1}",
+          "fi"
+        ]
+      }
+    ],
     {
       "type": "vagrant",
       "vagrantfile_template": "centos-6.vagrantfile",
       "output": "builds/{{.BuildName}}-{{.Provider}}.box",
       "compression_level": 9,
       "keep_input_artifact": false
-    }
+    },
+    [
+      {
+        "type": "artifice",
+        "files": [
+          ".tmp/centos-6.vagrantfile"
+        ]
+      },
+      {
+        "type": "shell-local",
+        "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+        "inline_shebang": "/bin/bash -e",
+        "inline": [
+          "if [[ -n ${1} ]] && [[ -f ${1} ]]; then",
+          "  echo '--> Restoring Vagrantfile template.'",
+          "  mv -f ${1} .",
+          "fi",
+          "echo '--> Cleanup output directories.'",
+          "find . -mindepth 1 -maxdepth 1 -type d -name output-* -exec rm -rf '{}' +"
+        ]
+      }
+    ]
   ],
   "provisioners": [
     {
       "type": "shell",
-      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /usr/bin/sudo -E /bin/bash {{ .Path }}",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
       "inline_shebang": "/bin/bash -e",
-      "remote_folder": "/home/vagrant",
+      "remote_folder": "/var/tmp",
       "skip_clean": false,
       "inline": [
-        "/bin/echo '--> Disabling SSH password authentication.'",
+        "/bin/echo '--> Installing packages.'",
+        "/usr/bin/yum -y install \\",
+        "  tuned",
+        "/sbin/chkconfig tuned on",
+        "/usr/bin/tuned-adm profile \\",
+        "  virtual-guest",
+        "/bin/echo '--> Configuring SSH.'",
         "/bin/sed -i \\",
         "  -e 's~^PasswordAuthentication yes~PasswordAuthentication no~g' \\",
+        "  -e 's~^#PermitRootLogin yes~PermitRootLogin no~g' \\",
+        "  -e 's~^#UseDNS yes~UseDNS no~g' \\",
+        "  -e 's~^AcceptEnv \\(.*\\)~#AcceptEnv \\1~g' \\",
         "  /etc/ssh/sshd_config",
+        "/bin/echo '--> Adding SSH user.'",
+        "/usr/sbin/useradd \\",
+        "  -m \\",
+        "  -d {{user `ssh_user_home`}} \\",
+        "  -s {{user `ssh_user_shell`}} \\",
+        "  {{user `ssh_user`}}",
+        "/bin/echo '--> Setting SSH user password.'",
+        "/bin/echo '{{user `ssh_user`}}:{{user `ssh_user_password`}}' | \\",
+        "  /usr/sbin/chpasswd",
+        "/bin/echo '--> Populating SSH user authorized_keys.'",
+        "/bin/mkdir -pm 0700 {{user `ssh_user_home`}}/.ssh",
+        "/bin/echo \"{{user `ssh_user_authorized_keys`}}\" \\",
+        "  > {{user `ssh_user_home`}}/.ssh/authorized_keys",
+        "/bin/chown -R {{user `ssh_user`}}:{{user `ssh_user`}} {{user `ssh_user_home`}}/.ssh",
+        "/bin/chmod 0600 {{user `ssh_user_home`}}/.ssh/authorized_keys",
+        "/bin/echo '--> Configuring sudoer access.'",
+        "/bin/echo -e '{{user `ssh_user`}} {{user `ssh_user_sudo`}}' \\",
+        "  > /etc/sudoers.d/{{user `ssh_user`}}",
+        "/bin/chmod 0440 /etc/sudoers.d/{{user `ssh_user`}}",
         "/bin/echo '--> Sealing virtual-guest.'",
         "/bin/echo '---> Removing SSH host keys.'",
         "/bin/rm -f /etc/ssh/ssh_host_*",
@@ -127,6 +207,8 @@
         "/bin/dd if=/dev/zero of=/boot/zero.out bs=1M &",
         "/bin/dd if=/dev/zero of=/zero.out bs=1M",
         "/bin/find /{,boot} -name zero.out -delete",
+        "/bin/echo '--> Locking root account.'",
+        "/usr/sbin/usermod -L root",
         "/bin/echo '--> Provisioning complete.'"
       ]
     }

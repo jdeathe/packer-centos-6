@@ -1,3 +1,5 @@
+.tmp/
 .vagrant/
 builds/
 isos/x86_64/
+output-*/
