@@ -1,11 +1,11 @@
 {
   "variables": {
-    "ssh_sudo": "ALL=(ALL) NOPASSWD: ALL",
     "ssh_user": "vagrant",
     "ssh_user_authorized_keys": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key",
     "ssh_user_home": "/home/vagrant",
     "ssh_user_password": "vagrant",
-    "ssh_user_shell": "/bin/bash"
+    "ssh_user_shell": "/bin/bash",
+    "ssh_user_sudo": "ALL=(ALL) NOPASSWD: ALL"
   },
   "builders": [
     {
@@ -139,14 +139,9 @@
         "  -e 's~^#UseDNS yes~UseDNS no~g' \\",
         "  -e 's~^AcceptEnv \\(.*\\)~#AcceptEnv \\1~g' \\",
         "  /etc/ssh/sshd_config",
-        "/bin/echo '--> Configuring wheel sudoers.'",
-        "/bin/echo -e '%wheel {{user `ssh_sudo`}}' \\",
-        "  > /etc/sudoers.d/wheel",
-        "/bin/chmod 0440 /etc/sudoers.d/wheel",
         "/bin/echo '--> Adding SSH user.'",
         "/usr/sbin/useradd \\",
         "  -m \\",
-        "  -G users,wheel \\",
         "  -d {{user `ssh_user_home`}} \\",
         "  -s {{user `ssh_user_shell`}} \\",
         "  {{user `ssh_user`}}",
@@ -159,6 +154,10 @@
         "  > {{user `ssh_user_home`}}/.ssh/authorized_keys",
         "/bin/chown -R {{user `ssh_user`}}:{{user `ssh_user`}} {{user `ssh_user_home`}}/.ssh",
         "/bin/chmod 0600 {{user `ssh_user_home`}}/.ssh/authorized_keys",
+        "/bin/echo '--> Configuring sudoer access.'",
+        "/bin/echo -e '{{user `ssh_user`}} {{user `ssh_user_sudo`}}' \\",
+        "  > /etc/sudoers.d/{{user `ssh_user`}}",
+        "/bin/chmod 0440 /etc/sudoers.d/{{user `ssh_user`}}",
         "/bin/echo '--> Sealing virtual-guest.'",
         "/bin/echo '---> Removing SSH host keys.'",
         "/bin/rm -f /etc/ssh/ssh_host_*",
