@@ -1,5 +1,10 @@
 {
   "variables": {
+    "guest_language": "en_GB.UTF-8",
+    "guest_lv_swap_size": "4096",
+    "guest_keyboard": "uk",
+    "guest_timezone": "Etc/UTC",
+    "ssh_root_password": "vagrant",
     "ssh_user": "vagrant",
     "ssh_user_authorized_keys": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA6NF8iallvQVp22WDkTkyrtvp9eWW6A8YVr+kz4TjGYe7gHzIw+niNltGEFHzD8+v1I2YJ6oXevct1YeS0o9HZyN1Q9qgCgzUFtdOKLv6IedplqoPkcmF0aYet2PkEDo3MlTBckFXPITAMzF8dJSIFo9D8HfdOV0IAdx4O7PtixWKn5y2hMNG0zQPyUecp4pzC6kivAIhyfHilFR61RGL+GPXQ2MWZWFYbAGjyiYJnAmCP3NOTd0jMZEnDkbUvxhMmBYSdETk1rRgm+R4LOzFUGaHqHDLKLX+FIPKcF96hrucXzcWyLbIbEgE98OHlnVYCzRdK8jlqm8tehUc9c9WhQ== vagrant insecure public key",
     "ssh_user_home": "/home/vagrant",
@@ -13,7 +18,7 @@
       "name": "centos-6",
       "boot_command": [
         "<esc><wait>",
-        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6-base-vagrant-virtualbox-ks.cfg",
+        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6-minimal.cfg LANG={{user `guest_language`}} KEYTABLE={{user `guest_keyboard`}} TIMEZONE={{user `guest_timezone`}} ROOTPW={{user `ssh_root_password`}} LV_SWAP_SIZE={{user `guest_lv_swap_size`}}",
         "<enter><wait>"
       ],
       "boot_wait": "3s",
@@ -33,7 +38,7 @@
       "iso_checksum_type": "sha256",
       "iso_checksum": "ec49c297d484b9da0787e5944edc38f7c70f21c0f6a60178d8e9a8926d1949f4",
       "ssh_username": "root",
-      "ssh_password": "vagrant",
+      "ssh_password": "{{user `ssh_root_password`}}",
       "ssh_port": 22,
       "ssh_wait_timeout": "10m",
       "shutdown_command": "/usr/bin/sudo /sbin/shutdown -q -P now",
