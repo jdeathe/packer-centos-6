@@ -47,7 +47,7 @@
       "vm_name": "centos-6",
       "vboxmanage": [
         ["modifyvm","{{.Name}}","--memory","1024"],
-        ["modifyvm","{{.Name}}","--vram","12"],
+        ["modifyvm","{{.Name}}","--vram","16"],
         ["modifyvm","{{.Name}}","--cpus","1"],
         ["modifyvm","{{.Name}}","--hpet","on"],
         ["modifyvm","{{.Name}}","--accelerate3d","off"],
