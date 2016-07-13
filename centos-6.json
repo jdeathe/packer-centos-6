@@ -1,5 +1,6 @@
 {
   "variables": {
+    "guest_boot_timeout": "0",
     "guest_language": "en_GB.UTF-8",
     "guest_lv_swap_size": "4096",
     "guest_keyboard": "uk",
@@ -18,7 +19,13 @@
       "name": "centos-6",
       "boot_command": [
         "<esc><wait>",
-        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6-minimal.cfg LANG={{user `guest_language`}} KEYTABLE={{user `guest_keyboard`}} TIMEZONE={{user `guest_timezone`}} ROOTPW={{user `ssh_root_password`}} LV_SWAP_SIZE={{user `guest_lv_swap_size`}}",
+        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6-minimal.cfg",
+        " BOOT_TIMEOUT={{user `guest_boot_timeout`}}",
+        " LANG={{user `guest_language`}}",
+        " KEYTABLE={{user `guest_keyboard`}}",
+        " TIMEZONE={{user `guest_timezone`}}",
+        " ROOTPW={{user `ssh_root_password`}}",
+        " LV_SWAP_SIZE={{user `guest_lv_swap_size`}}",
         "<enter><wait>"
       ],
       "boot_wait": "3s",
@@ -194,9 +201,8 @@
         "/etc/init.d/auditd stop",
         "/etc/init.d/rsyslog stop",
         "/bin/echo '--> Truncate log files.'",
-        "/bin/find /var/log -type f | \\",
-        "  /usr/bin/xargs -I {} \\",
-        "  /usr/bin/truncate -s 0 {}",
+        "/bin/find /var/log -type f \\",
+        "  -exec /usr/bin/truncate -s 0 {} \\;",
         "/bin/echo '--> Emptying temporary directories.'",
         "/bin/rm -rf /{root,tmp,var/cache/{ldconfig,yum}}/*",
         "/bin/echo '--> Zero out and reset swap.'",
