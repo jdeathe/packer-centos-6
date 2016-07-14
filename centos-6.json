@@ -2,7 +2,11 @@
   "variables": {
     "guest_boot_timeout": "0",
     "guest_language": "en_GB.UTF-8",
+    "guest_lv_root_fstype": "ext4",
+    "guest_lv_root_size": "1024",
     "guest_lv_swap_size": "4096",
+    "guest_partition_boot_fstype": "ext4",
+    "guest_partition_boot_size": "4096",
     "guest_keyboard": "uk",
     "guest_timezone": "Etc/UTC",
     "ssh_root_password": "vagrant",
@@ -25,7 +29,11 @@
         " KEYTABLE={{user `guest_keyboard`}}",
         " TIMEZONE={{user `guest_timezone`}}",
         " ROOTPW={{user `ssh_root_password`}}",
+        " LV_ROOT_FSTYPE={{user `guest_lv_root_fstype`}}",
+        " LV_ROOT_SIZE={{user `guest_lv_root_size`}}",
         " LV_SWAP_SIZE={{user `guest_lv_swap_size`}}",
+        " PART_BOOT_FSTYPE={{user `guest_partition_boot_fstype`}}",
+        " PART_BOOT_SIZE={{user `guest_partition_boot_size`}}",
         "<enter><wait>"
       ],
       "boot_wait": "3s",
