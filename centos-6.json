@@ -6,7 +6,7 @@
     "guest_lv_root_size": "1024",
     "guest_lv_swap_size": "4096",
     "guest_partition_boot_fstype": "ext4",
-    "guest_partition_boot_size": "4096",
+    "guest_partition_boot_size": "250",
     "guest_keyboard": "uk",
     "guest_timezone": "Etc/UTC",
     "ssh_root_password": "vagrant",
