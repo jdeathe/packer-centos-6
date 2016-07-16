@@ -182,6 +182,8 @@
         "  > {{user `ssh_user_home`}}/.ssh/authorized_keys",
         "/bin/chown -R {{user `ssh_user`}}:{{user `ssh_user`}} {{user `ssh_user_home`}}/.ssh",
         "/bin/chmod 0600 {{user `ssh_user_home`}}/.ssh/authorized_keys",
+        "/bin/echo '---> Restoring SELinux context'",
+        "/sbin/restorecon -R {{user `ssh_user_home`}}/.ssh",
         "/bin/echo '--> Configuring sudoer access.'",
         "/bin/echo -e '{{user `ssh_user`}} {{user `ssh_user_sudo`}}' \\",
         "  > /etc/sudoers.d/{{user `ssh_user`}}",
