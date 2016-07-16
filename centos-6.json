@@ -1,6 +1,7 @@
 {
   "variables": {
     "guest_boot_timeout": "0",
+    "guest_hard_disk_size": "40960",
     "guest_keyboard": "uk",
     "guest_language": "en_GB.UTF-8",
     "guest_lv_root_fstype": "ext4",
@@ -41,7 +42,7 @@
         "<enter><wait>"
       ],
       "boot_wait": "3s",
-      "disk_size": "40960",
+      "disk_size": "{{user `guest_hard_disk_size`}}",
       "format": "ovf",
       "guest_additions_mode": "disable",
       "guest_os_type": "RedHat_64",
