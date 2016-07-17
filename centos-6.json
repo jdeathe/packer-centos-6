@@ -113,13 +113,13 @@
         "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
         "inline_shebang": "/bin/bash -e",
         "inline": [
-          "if [[ ! -d .tmp ]]; then",
-          "   mkdir .tmp",
+          "if [[ ! -d output-tmp ]]; then",
+          "   mkdir output-tmp",
           "fi",
           "if [[ -n ${1} ]] && [[ -f ${1} ]]; then",
           "  echo '--> Generating Vagrantfile template.'",
-          "  cp -pf ${1} .tmp/${1}",
-          "  sed -e 's~[{][{]user `ssh_user`[}][}]~{{user `ssh_user`}}~g' .tmp/${1} > ${1}",
+          "  cp -pf ${1} output-tmp/${1}",
+          "  sed -e 's~[{][{]user `ssh_user`[}][}]~{{user `ssh_user`}}~g' output-tmp/${1} > ${1}",
           "fi"
         ]
       }
@@ -135,7 +135,7 @@
       {
         "type": "artifice",
         "files": [
-          ".tmp/centos-6.vagrantfile"
+          "output-tmp/centos-6.vagrantfile"
         ]
       },
       {
@@ -148,7 +148,7 @@
           "  mv -f ${1} .",
           "fi",
           "echo '--> Cleanup output directories.'",
-          "find . -mindepth 1 -maxdepth 1 -type d -name output-* -exec rm -rf '{}' +"
+          "find . -mindepth 1 -maxdepth 1 -type d -name \"output-*\" -exec rm -rf '{}' +"
         ]
       }
     ]
