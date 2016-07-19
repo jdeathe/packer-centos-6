@@ -1,7 +1,15 @@
 {
   "variables": {
+    "build_export_format": "ovf",
+    "build_iso_checksum": "ec49c297d484b9da0787e5944edc38f7c70f21c0f6a60178d8e9a8926d1949f4",
+    "build_iso_checksum_type": "sha256",
+    "build_iso_filename": "CentOS-6.8-x86_64-minimal.iso",
+    "build_iso_target_path": "isos/x86_64",
+    "build_name": "CentOS-6.8-x86_64-minimal-en_US",
+    "build_provider": "virtualbox",
     "guest_boot_timeout": "0",
     "guest_bootloader_append": "",
+    "guest_cpus": "1",
     "guest_firewall_disabled": "false",
     "guest_hard_disk_size": "40960",
     "guest_keyboard": "us",
@@ -9,10 +17,13 @@
     "guest_lv_root_fstype": "ext4",
     "guest_lv_root_size": "1024",
     "guest_lv_swap_size": "4096",
+    "guest_name": "centos-6",
     "guest_partition_boot_fstype": "ext4",
     "guest_partition_boot_size": "250",
+    "guest_memory": "512",
     "guest_selinux": "permissive",
     "guest_timezone": "Etc/UTC",
+    "guest_vram": "16",
     "guest_vg_root_reserved_space": "0",
     "ssh_root_password": "vagrant",
     "ssh_user": "vagrant",
@@ -25,7 +36,7 @@
   "builders": [
     {
       "type": "virtualbox-iso",
-      "name": "centos-6",
+      "name": "{{user `build_name`}}",
       "boot_command": [
         "<esc><wait>",
         "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6-minimal.cfg",
@@ -48,32 +59,27 @@
       ],
       "boot_wait": "3s",
       "disk_size": "{{user `guest_hard_disk_size`}}",
-      "format": "ovf",
+      "format": "{{user `build_export_format`}}",
       "guest_additions_mode": "disable",
       "guest_os_type": "RedHat_64",
       "hard_drive_interface": "sata",
       "headless": true,
       "http_directory": "http",
+      "iso_checksum": "{{user `build_iso_checksum`}}",
+      "iso_checksum_type": "{{user `build_iso_checksum_type`}}",
       "iso_interface": "sata",
-      "iso_target_path": "isos/x86_64",
-      "iso_urls": [
-        "isos/x86_64/CentOS-6.8-x86_64-minimal.iso",
-        "http://mirrors.kernel.org/centos/6.8/isos/x86_64/CentOS-6.8-x86_64-minimal.iso"
-      ],
-      "iso_checksum_type": "sha256",
-      "iso_checksum": "ec49c297d484b9da0787e5944edc38f7c70f21c0f6a60178d8e9a8926d1949f4",
+      "iso_target_path": "{{user `build_iso_target_path`}}",
+      "iso_url": "{{user `build_iso_target_path`}}/{{user `build_iso_filename`}}",
       "ssh_username": "root",
       "ssh_password": "{{user `ssh_root_password`}}",
       "ssh_port": 22,
       "ssh_wait_timeout": "10m",
       "shutdown_command": "/usr/bin/sudo /sbin/shutdown -q -P now",
       "shutdown_timeout": "1m",
-      "virtualbox_version_file": ".vbox_version",
-      "vm_name": "centos-6",
       "vboxmanage": [
-        ["modifyvm","{{.Name}}","--memory","1024"],
-        ["modifyvm","{{.Name}}","--vram","16"],
         ["modifyvm","{{.Name}}","--cpus","1"],
+        ["modifyvm","{{.Name}}","--memory","1024"],
+        ["modifyvm","{{.Name}}","--vram","8"],
         ["modifyvm","{{.Name}}","--hpet","on"],
         ["modifyvm","{{.Name}}","--accelerate3d","off"],
         ["modifyvm","{{.Name}}","--accelerate2dvideo","off"],
@@ -88,17 +94,21 @@
         ["modifyvm","{{.Name}}","--videocap","off"]
       ],
       "vboxmanage_post": [
-        ["modifyvm","{{.Name}}","--memory","512"],
+        ["modifyvm","{{.Name}}","--cpus","{{user `guest_cpus`}}"],
+        ["modifyvm","{{.Name}}","--memory","{{user `guest_memory`}}"],
+        ["modifyvm","{{.Name}}","--vram","{{user `guest_vram`}}"],
         ["modifyvm","{{.Name}}","--vrde","off"],
         ["storagectl","{{.Name}}","--name","IDE Controller","--remove"],
         ["storagectl","{{.Name}}","--name","SATA Controller","--hostiocache","off"]
-      ]
+      ],
+      "virtualbox_version_file": ".vbox_version",
+      "vm_name": "{{user `guest_name`}}"
     }
   ],
   "post-processors": [
     {
       "type": "compress",
-      "output": "builds/{{.BuildName}}-{{.BuilderType}}.box.tar.gz",
+      "output": "builds/{{.BuildName}}.{{user `build_export_format`}}.tar.gz",
       "compression_level": 9,
       "keep_input_artifact": false
     },
