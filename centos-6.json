@@ -168,13 +168,35 @@
         "/sbin/chkconfig tuned on",
         "/usr/bin/tuned-adm profile \\",
         "  virtual-guest",
+        "/bin/echo '--> Cleanup YUM.'",
+        "/usr/bin/yum clean all",
+        "/bin/echo '--> Rebuilding RPM DB.'",
+        "/bin/rpm --rebuilddb"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+      "inline_shebang": "/bin/bash -e",
+      "remote_folder": "/var/tmp",
+      "skip_clean": false,
+      "inline": [
         "/bin/echo '--> Configuring SSH.'",
         "/bin/sed -i \\",
         "  -e 's~^PasswordAuthentication yes~PasswordAuthentication no~g' \\",
         "  -e 's~^#PermitRootLogin yes~PermitRootLogin no~g' \\",
         "  -e 's~^#UseDNS yes~UseDNS no~g' \\",
         "  -e 's~^AcceptEnv \\(.*\\)~#AcceptEnv \\1~g' \\",
-        "  /etc/ssh/sshd_config",
+        "  /etc/ssh/sshd_config"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+      "inline_shebang": "/bin/bash -e",
+      "remote_folder": "/var/tmp",
+      "skip_clean": false,
+      "inline": [
         "/bin/echo '--> Adding SSH user.'",
         "/usr/sbin/useradd \\",
         "  -m \\",
@@ -195,7 +217,16 @@
         "/bin/echo '--> Configuring sudoer access.'",
         "/bin/echo -e '{{user `ssh_user`}} {{user `ssh_user_sudo`}}' \\",
         "  > /etc/sudoers.d/{{user `ssh_user`}}",
-        "/bin/chmod 0440 /etc/sudoers.d/{{user `ssh_user`}}",
+        "/bin/chmod 0440 /etc/sudoers.d/{{user `ssh_user`}}"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+      "inline_shebang": "/bin/bash -e",
+      "remote_folder": "/var/tmp",
+      "skip_clean": false,
+      "inline": [
         "/bin/echo '--> Sealing virtual-guest.'",
         "/bin/echo '---> Removing SSH host keys.'",
         "/bin/rm -f /etc/ssh/ssh_host_*",
@@ -210,16 +241,16 @@
         "  -e 's~^DHCP_HOSTNAME=.*$~DHCP_HOSTNAME=\\\"localhost.localdomain\\\"~' \\",
         "  -e '/^HWADDR=/d' \\",
         "  -e '/^UUID=/d' \\",
-        "  /etc/sysconfig/network-scripts/ifcfg-eth*",
-        "/bin/echo '--> Cleanup YUM.'",
-        "/usr/bin/yum clean all",
-        "/bin/echo '--> Rebuilding RPM DB.'",
-        "/bin/rpm --rebuilddb",
-        "/bin/echo '--> Purging desktop wallpapers and backgrounds.'",
-        "/bin/find /usr/share/{backgrounds,kde4,wallpapers} \\",
-        "  -type f -regextype posix-extended -regex '.*\\.(jpg|png)$' -delete",
-        "/bin/echo '--> Truncating documentaion.'",
-        "/bin/find /usr/share/{man,doc,info} -type f -delete",
+        "  /etc/sysconfig/network-scripts/ifcfg-eth*"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+      "inline_shebang": "/bin/bash -e",
+      "remote_folder": "/var/tmp",
+      "skip_clean": false,
+      "inline": [
         "GUEST_LANG=\"{{user `guest_language`}}\"",
         "/bin/echo '--> Removing locale (internationalisation) files for unused languages.'",
         "/bin/find /usr/share/i18n/locales \\",
@@ -237,7 +268,39 @@
         "  ! -regex \".*\/(en|en_US|${GUEST_LANG%%_*}|${LANG%%.*})(@.+)?$\" \\",
         "  -exec /bin/find -- {} -type f -name \"*.mo\" -delete \\;",
         "/bin/echo '--> Locking locale to {{user `guest_language`}}.'",
-        "/usr/bin/chattr +i /etc/sysconfig/i18n",
+        "/usr/bin/chattr +i /etc/sysconfig/i18n"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+      "inline_shebang": "/bin/bash -e",
+      "remote_folder": "/var/tmp",
+      "skip_clean": false,
+      "inline": [
+        "/bin/echo '--> Truncating documentaion.'",
+        "/bin/find /usr/share/{man,doc,info} -type f -delete"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+      "inline_shebang": "/bin/bash -e",
+      "remote_folder": "/var/tmp",
+      "skip_clean": false,
+      "inline": [
+        "/bin/echo '--> Purging desktop wallpapers and backgrounds.'",
+        "/bin/find /usr/share/{backgrounds,kde4,wallpapers} \\",
+        "  -type f -regextype posix-extended -regex '.*\\.(jpg|png)$' -delete"
+      ]
+    },
+    {
+      "type": "shell",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+      "inline_shebang": "/bin/bash -e",
+      "remote_folder": "/var/tmp",
+      "skip_clean": false,
+      "inline": [
         "/bin/echo '--> Stopping logging services.'",
         "/etc/init.d/auditd stop",
         "/etc/init.d/rsyslog stop",
