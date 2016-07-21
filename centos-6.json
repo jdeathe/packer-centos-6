@@ -6,7 +6,7 @@
     "build_iso_filename": "CentOS-6.8-x86_64-minimal.iso",
     "build_iso_target_path": "isos/x86_64",
     "build_name": "CentOS-6.8-x86_64-minimal-en_US",
-    "build_provider": "virtualbox",
+    "build_output_directory": "builds",
     "guest_boot_timeout": "0",
     "guest_bootloader_append": "",
     "guest_cpus": "1",
@@ -108,9 +108,9 @@
   "post-processors": [
     {
       "type": "compress",
-      "output": "builds/{{.BuildName}}.{{user `build_export_format`}}.tar.gz",
+      "output": "{{user `build_output_directory`}}/{{.BuildName}}.{{user `build_export_format`}}.tar.gz",
       "compression_level": 9,
-      "keep_input_artifact": false
+      "keep_input_artifact": true
     },
     [
       {
@@ -136,11 +136,32 @@
       }
     ],
     {
+      "type": "shell-local",
+      "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+      "inline_shebang": "/bin/bash -e",
+      "inline": [
+        "if [[ -n ${1} ]] && [[ -f ${1} ]] && [[ ${1##*.} == vmdk ]]; then",
+        "  QEMU_IMG=$(type -p qemu-img)",
+        "  if [[ -n ${QEMU_IMG} ]]; then",
+        "    echo '--> Converting VMDK image to qcow2.'",
+        "    ${QEMU_IMG} convert -c -f vmdk -O qcow2 ${1} ${1%.*}.qcow2",
+        "    if [[ -f ${1%.*}.qcow2 ]]; then",
+        "      if [[ ! -d {{user `build_output_directory`}} ]]; then",
+        "        mkdir -p {{user `build_output_directory`}}",
+        "      fi",
+        "      echo '--> Moving image to build output directory.'",
+        "      mv ${1%.*}.qcow2 {{user `build_output_directory`}}/{{user `build_name`}}.qcow2",
+        "    fi",
+        "  fi",
+        "fi"
+      ]
+    },
+    {
       "type": "vagrant",
       "vagrantfile_template": "centos-6.vagrantfile",
-      "output": "builds/{{.BuildName}}-{{.Provider}}.box",
+      "output": "{{user `build_output_directory`}}/{{.BuildName}}-{{.Provider}}.box",
       "compression_level": 9,
-      "keep_input_artifact": false
+      "keep_input_artifact": true
     },
     [
       {
