@@ -37,7 +37,7 @@
     {
       "type": "qemu",
       "name": "{{user `build_name`}}-QEMU",
-      "accelerator": "kvm:tcg",
+      "accelerator": "kvm",
       "boot_command": [
         "<esc><wait>",
         "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6-minimal.cfg",
