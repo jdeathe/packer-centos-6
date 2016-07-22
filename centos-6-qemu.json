@@ -36,7 +36,7 @@
   "builders": [
     {
       "type": "qemu",
-      "name": "{{user `build_name`}}-QEMU",
+      "name": "{{user `build_name`}}",
       "accelerator": "kvm",
       "boot_command": [
         "<esc><wait>",
