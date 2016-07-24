@@ -17,7 +17,6 @@ fi
 
 /bin/echo '--> Zero out any remaining free disk space.'
 /bin/dd if=/dev/zero of=/boot/boot.zero bs=1M
-# /bin/dd if=/dev/zero of=/root.zero bs=1M
 
 # Old QEMU versions fail if dd writes out too much data in one file.
 OF_ID=1
