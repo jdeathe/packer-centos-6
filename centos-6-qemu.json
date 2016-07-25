@@ -70,7 +70,7 @@
       "iso_checksum_type": "{{user `build_iso_checksum_type`}}",
       "iso_target_path": "{{user `build_iso_target_path`}}",
       "iso_url": "{{user `build_iso_target_path`}}/{{user `build_iso_filename`}}",
-      "net_device": "virtio-net",
+      "net_device": "e1000",
       "qemuargs": [
         ["-m", "{{user `guest_memory`}}M"]
       ],
