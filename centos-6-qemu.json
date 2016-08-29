@@ -31,7 +31,7 @@
     "ssh_user_home": "/home/vagrant",
     "ssh_user_password": "vagrant",
     "ssh_user_shell": "/bin/bash",
-    "ssh_user_sudo": "ALL=(ALL) NOPASSWD: ALL"
+    "ssh_user_sudo": "ALL=(ALL) NOPASSWD:ALL"
   },
   "builders": [
     {
