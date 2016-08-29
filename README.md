@@ -31,5 +31,5 @@ $ curl -o \
 To build the base box run the following Packer command
 
 ```
-$ packer build centos-6.json
+$ packer build centos-6-virtualbox.json
 ```
