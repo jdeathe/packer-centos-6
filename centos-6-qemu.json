@@ -102,7 +102,7 @@
       },
       {
         "type": "shell-local",
-        "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+        "execute_command": "chmod +x {{.Path}}; {{.Vars}} /bin/bash {{.Path}}",
         "inline_shebang": "/bin/bash -e",
         "inline": [
           "if [[ ! -d output-tmp ]]; then",
@@ -132,7 +132,7 @@
       },
       {
         "type": "shell-local",
-        "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} /bin/bash {{ .Path }}",
+        "execute_command": "chmod +x {{.Path}}; {{.Vars}} /bin/bash {{.Path}}",
         "inline_shebang": "/bin/bash -e",
         "inline": [
           "if [[ -n ${1} ]] && [[ -f ${1} ]]; then",
@@ -148,7 +148,7 @@
   "provisioners": [
     {
       "type": "shell",
-      "execute_command": "chmod +x {{ .Path }}; env {{ .Vars }} /bin/bash {{ .Path }}",
+      "execute_command": "chmod +x {{.Path}}; env {{.Vars}} /bin/bash {{.Path}}",
       "remote_folder": "/var/tmp",
       "skip_clean": false,
       "environment_vars": [
