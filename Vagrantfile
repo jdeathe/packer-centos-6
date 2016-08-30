@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 
 $box_version = "6.8.4"
+$release_version = "0.4.0"
 $share_home = false
 $vm_cpus = 1
 $vm_gui = false
@@ -13,7 +14,7 @@ Vagrant.configure(2) do |config|
   config.vm.box = "jdeathe/centos-6"
   config.vm.box_version = $box_version
   # config.vm.box_url = "https://atlas.hashicorp.com/jdeathe/boxes/centos-6/versions/%s/providers/virtualbox.box" % $box_version
-  # config.vm.box_url = "https://github.com/jdeathe/packer-centos-6/releases/download/%s/centos-6-virtualbox.box" % $box_version
+  # config.vm.box_url = "https://github.com/jdeathe/packer-centos-6/releases/download/%s/centos-6-virtualbox.box" % $release_version
 
   config.vm.define $vm_name
   config.vm.hostname = $vm_hostname
