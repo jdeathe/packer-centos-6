@@ -1,6 +1,6 @@
 {
   "variables": {
-    "build_export_format": "qcow2",
+    "build_export_format": "ovf",
     "build_iso_checksum": "ec49c297d484b9da0787e5944edc38f7c70f21c0f6a60178d8e9a8926d1949f4",
     "build_iso_checksum_type": "sha256",
     "build_iso_filename": "CentOS-6.8-x86_64-minimal.iso",
@@ -17,7 +17,7 @@
     "guest_lv_root_fstype": "ext4",
     "guest_lv_root_size": "1024",
     "guest_lv_swap_size": "4096",
-    "guest_name": "centos-6",
+    "guest_name": "CentOS-6.8-x86_64-minimal-en_US",
     "guest_partition_boot_fstype": "ext4",
     "guest_partition_boot_size": "250",
     "guest_memory": "512",
@@ -35,12 +35,11 @@
   },
   "builders": [
     {
-      "type": "qemu",
+      "type": "virtualbox-iso",
       "name": "{{user `build_name`}}",
-      "accelerator": "kvm",
       "boot_command": [
         "<esc><wait>",
-        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6-minimal.cfg",
+        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/CentOS-6-minimal.cfg",
         " BOOT_TIMEOUT={{user `guest_boot_timeout`}}",
         " BOOTLOADER_APPEND=\"{{user `guest_bootloader_append`}}\"",
         " BOOTLOADER_THEME=details",
@@ -60,30 +59,50 @@
       ],
       "boot_wait": "3s",
       "disk_size": "{{user `guest_hard_disk_size`}}",
-      "disk_compression": true,
       "format": "{{user `build_export_format`}}",
-      "machine_type": "pc",
-      "disk_interface": "scsi",
+      "guest_additions_mode": "disable",
+      "guest_os_type": "RedHat_64",
+      "hard_drive_interface": "sata",
       "headless": true,
       "http_directory": "http",
       "iso_checksum": "{{user `build_iso_checksum`}}",
       "iso_checksum_type": "{{user `build_iso_checksum_type`}}",
+      "iso_interface": "sata",
       "iso_target_path": "{{user `build_iso_target_path`}}",
       "iso_url": "{{user `build_iso_target_path`}}/{{user `build_iso_filename`}}",
-      "net_device": "e1000",
-      "qemuargs": [
-        ["-m", "{{user `guest_memory`}}M"]
-      ],
-      "qemu_binary": "qemu-system-x86_64",
       "ssh_username": "root",
       "ssh_password": "{{user `ssh_root_password`}}",
       "ssh_port": 22,
-      "ssh_wait_timeout": "60m",
-      "shutdown_command": "/usr/bin/sudo /sbin/shutdown -q -P now",
+      "ssh_wait_timeout": "10m",
+      "shutdown_command": "/sbin/shutdown -q -P now",
       "shutdown_timeout": "1m",
-      "vm_name": "{{user `guest_name`}}",
-      "vnc_port_min": "5959",
-      "vnc_port_max": "5959"
+      "vboxmanage": [
+        ["modifyvm","{{.Name}}","--cpus","1"],
+        ["modifyvm","{{.Name}}","--memory","1024"],
+        ["modifyvm","{{.Name}}","--vram","8"],
+        ["modifyvm","{{.Name}}","--hpet","on"],
+        ["modifyvm","{{.Name}}","--accelerate3d","off"],
+        ["modifyvm","{{.Name}}","--accelerate2dvideo","off"],
+        ["modifyvm","{{.Name}}","--bioslogofadein","off"],
+        ["modifyvm","{{.Name}}","--bioslogofadeout","off"],
+        ["modifyvm","{{.Name}}","--bioslogodisplaytime","0"],
+        ["modifyvm","{{.Name}}","--biosbootmenu","disabled"],
+        ["modifyvm","{{.Name}}","--clipboard","disabled"],
+        ["modifyvm","{{.Name}}","--draganddrop","disabled"],
+        ["modifyvm","{{.Name}}","--usb","off"],
+        ["modifyvm","{{.Name}}","--audio","none"],
+        ["modifyvm","{{.Name}}","--videocap","off"]
+      ],
+      "vboxmanage_post": [
+        ["modifyvm","{{.Name}}","--cpus","{{user `guest_cpus`}}"],
+        ["modifyvm","{{.Name}}","--memory","{{user `guest_memory`}}"],
+        ["modifyvm","{{.Name}}","--vram","{{user `guest_vram`}}"],
+        ["modifyvm","{{.Name}}","--vrde","off"],
+        ["storagectl","{{.Name}}","--name","IDE Controller","--remove"],
+        ["storagectl","{{.Name}}","--name","SATA Controller","--hostiocache","off"]
+      ],
+      "virtualbox_version_file": ".vbox_version",
+      "vm_name": "{{user `guest_name`}}"
     }
   ],
   "post-processors": [
@@ -97,7 +116,7 @@
       {
         "type": "artifice",
         "files": [
-          "centos-6.vagrantfile"
+          "CentOS-6.Vagrantfile"
         ]
       },
       {
@@ -118,7 +137,7 @@
     ],
     {
       "type": "vagrant",
-      "vagrantfile_template": "centos-6.vagrantfile",
+      "vagrantfile_template": "CentOS-6.Vagrantfile",
       "output": "{{user `build_output_directory`}}/{{.BuildName}}-{{.Provider}}.box",
       "compression_level": 9,
       "keep_input_artifact": true
@@ -127,7 +146,7 @@
       {
         "type": "artifice",
         "files": [
-          "output-tmp/centos-6.vagrantfile"
+          "output-tmp/CentOS-6.Vagrantfile"
         ]
       },
       {
@@ -163,6 +182,7 @@
       "scripts": [
         "scripts/install/tuned-virtual-guest.sh",
         "scripts/common/sshd-config-non-root-key-auth.sh",
+        "scripts/common/sudoers-default-not-requiretty.sh",
         "scripts/common/ssh-user.sh",
         "scripts/common/seal-virtual-guest.sh",
         "scripts/common/locale-trim-definitions.sh",
