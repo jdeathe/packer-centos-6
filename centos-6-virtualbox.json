@@ -74,7 +74,7 @@
       "ssh_password": "{{user `ssh_root_password`}}",
       "ssh_port": 22,
       "ssh_wait_timeout": "10m",
-      "shutdown_command": "/usr/bin/sudo /sbin/shutdown -q -P now",
+      "shutdown_command": "/sbin/shutdown -q -P now",
       "shutdown_timeout": "1m",
       "vboxmanage": [
         ["modifyvm","{{.Name}}","--cpus","1"],
