@@ -41,7 +41,8 @@ vboxmanage := $(shell type -p vboxmanage)
 	all \
 	build \
 	install \
-	prerequisites
+	prerequisites \
+	require-supported-architecture
 
 all: prerequisites | build
 
