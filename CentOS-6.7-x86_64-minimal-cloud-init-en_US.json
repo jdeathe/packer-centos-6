@@ -1,0 +1,16 @@
+{
+	"build_iso_checksum": "2ed5ea551dffc3e4b82847b3cee1f6cd748e8071",
+	"build_iso_checksum_type": "sha1",
+	"build_iso_filename": "CentOS-6.7-x86_64-minimal.iso",
+	"build_iso_target_path": "isos/x86_64",
+	"build_name": "CentOS-6.7-x86_64-minimal-cloud-init-en_US",
+	"guest_hard_disk_size": "40960",
+	"guest_keyboard": "us",
+	"guest_language": "en_US.UTF-8",
+	"guest_lv_swap_size": "4096",
+	"guest_name": "CentOS-6.7-x86_64-minimal-cloud-init-en_US",
+	"guest_partition_boot_size": "250",
+	"guest_memory": "512",
+	"guest_selinux": "permissive",
+	"guest_vg_root_reserved_space": "0"
+}

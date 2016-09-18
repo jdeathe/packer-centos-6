@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-$box_version = "6.8.4"
+$box_version = "6.8.0"
 $share_home = false
 $vm_cpus = 1
 $vm_hostname = "centos-6.local"
@@ -9,7 +9,7 @@ $vm_memory = 512
 $vm_name = "centos-6"
 
 Vagrant.configure(2) do |config|
-  config.vm.box = "jdeathe/centos-6"
+  config.vm.box = "jdeathe/centos-6-x86_64-minimal-en_us"
   config.vm.box_version = $box_version
 
   # Sets a name other than 'default'
