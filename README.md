@@ -13,7 +13,7 @@ The build environment required is Mac OSX or GNU Linux.
 To build the box file you will need the following installed:
 
 - [VirtualBox](https://www.virtualbox.org) (5.0.26)
-- [Vagrant](https://www.vagrantup.com) (1.8.5)
+- [Vagrant](https://www.vagrantup.com) (1.8.4)
 - [Packer](https://www.packer.io) (0.10.1)
 
 ### Build
@@ -28,6 +28,14 @@ To build CentOS-6.7 for a 32 bit architecture.
 
 ```
 $ env BOX_ARCH=i386 BOX_MINOR_RELEASE=6.7 make
+```
+
+#### Box Variants
+
+To build a box variant from an alternative box template use `BOX_VARIANT`. The default is `minimal` but there is now an alternative `minimal-cloud-init` template to build boxes that include Cloud-Init.
+
+```
+$ env BOX_VARIANT=minimal-cloud-init BOX_ARCH=x86_64 BOX_MINOR_RELEASE=6.8 make
 ```
 
 ### Local install
