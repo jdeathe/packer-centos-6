@@ -88,15 +88,72 @@ vagrant := $(shell type -p vagrant)
 vboxmanage := $(shell type -p vboxmanage)
 
 .PHONY: \
+	_prerequisites \
+	_require-supported-architecture \
+	_usage \
 	all \
 	build \
-	install \
-	prerequisites \
-	require-supported-architecture
+	help \
+	install
 
-all: prerequisites | build
+_prerequisites:
+ifeq ($(vboxmanage),)
+	$(error "Please install VirtualBox. (https://www.virtualbox.org/)")
+endif
 
-build: prerequisites require-supported-architecture download-iso
+ifeq ($(vagrant),)
+	$(error "Please install Vagrant. (https://www.vagrantup.com)")
+endif
+
+ifeq ($(packer),)
+	$(error "Please install Packer. (https://www.packer.io)")
+endif
+
+ifeq ($(curl),)
+	$(error "Please install the curl package.")
+endif
+
+ifeq ($(gzip),)
+	$(error "Please install the gzip package.")
+endif
+
+ifeq ($(openssl),)
+	$(error "Please install the openssl package.")
+endif
+
+_require-supported-architecture:
+	@ if [[ ! $(BOX_ARCH) =~ $(BOX_ARCH_PATTERN) ]]; then \
+			echo "$(PREFIX_STEP_NEGATIVE)Unsupported architecture ($(BOX_ARCH))" >&2; \
+			echo "$(PREFIX_SUB_STEP)Supported values: x86_64|i386." >&2; \
+			exit 1; \
+		fi
+
+_usage:
+	@echo Usage: make [options] [target] ...
+	@echo Usage: env KEY=\"VALUE\" make [options] -- [target] ...
+	@echo
+	@echo This makefile allows you to build a Vagrant box file from a template and
+	@echo with Packer.
+	@echo
+	@echo Targets:
+	@echo "  all                       Combines targets build and install.          "
+	@echo "  build                     Runs the packer build job. This is the       "
+	@echo "                            default target.                              "
+	@echo "  download-iso              Download the source ISO image - required to  "
+	@echo "                            build the Virtual Machine. Packer should     "
+	@echo "                            be capable of downloading the source however "
+	@echo "                            this feature can fail.                       "
+	@echo "  help                      Show this help.                              "
+	@echo "  install                   Used to install the Vagrant box with a       " 
+	@echo "                            unique name based on the sha1 sum of         "
+	@echo "                            the box file. It will output a minimal       " 
+	@echo "                            Vagrantfile source that can be used for      "
+	@echo "                            testing the build before release.            "
+	@echo
+
+all: _prerequisites | build install
+
+build: _prerequisites _require-supported-architecture | download-iso
 	@ echo "$(PREFIX_STEP)Building $(PACKER_BUILD_NAME)"
 	@ if [[ ! -f $(PACKER_VAR_FILE) ]]; then \
 			echo "$(PREFIX_SUB_STEP_NEGATIVE)Missing var-file: $(PACKER_VAR_FILE)" >&2; \
@@ -130,7 +187,7 @@ build: prerequisites require-supported-architecture download-iso
 			fi; \
 		fi
 
-download-iso: prerequisites require-supported-architecture
+download-iso: _prerequisites _require-supported-architecture
 	@ if [[ ! -f isos/$(BOX_ARCH)/$(SOURCE_ISO_NAME) ]]; then \
 			if [[ ! -d ./isos/$(BOX_ARCH) ]]; then \
 				mkdir -p ./isos/$(BOX_ARCH); \
@@ -146,7 +203,9 @@ download-iso: prerequisites require-supported-architecture
 			fi; \
 		fi
 
-install: prerequisites require-supported-architecture
+help: _usage
+
+install: _prerequisites _require-supported-architecture
 	$(eval $@_box_name := $(shell \
 		echo "$(PACKER_BUILD_NAME)" \
 			| awk '{ print tolower($$1); }' \
@@ -170,36 +229,4 @@ install: prerequisites require-supported-architecture
 		else \
 			echo "$(PREFIX_STEP_NEGATIVE)No box file."; \
 			echo "$(PREFIX_SUB_STEP)Try running: make build"; \
-		fi
-
-prerequisites:
-ifeq ($(vboxmanage),)
-	$(error "Please install VirtualBox. (https://www.virtualbox.org/)")
-endif
-
-ifeq ($(vagrant),)
-	$(error "Please install Vagrant. (https://www.vagrantup.com)")
-endif
-
-ifeq ($(packer),)
-	$(error "Please install Packer. (https://www.packer.io)")
-endif
-
-ifeq ($(curl),)
-	$(error "Please install the curl package.")
-endif
-
-ifeq ($(gzip),)
-	$(error "Please install the gzip package.")
-endif
-
-ifeq ($(openssl),)
-	$(error "Please install the openssl package.")
-endif
-
-require-supported-architecture:
-	@ if [[ ! $(BOX_ARCH) =~ $(BOX_ARCH_PATTERN) ]]; then \
-			echo "$(PREFIX_STEP_NEGATIVE)Unsupported architecture ($(BOX_ARCH))" >&2; \
-			echo "$(PREFIX_SUB_STEP)Supported values: x86_64|i386." >&2; \
-			exit 1; \
 		fi
