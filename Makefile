@@ -130,9 +130,9 @@ _require-supported-architecture:
 
 _usage:
 	@echo Usage: make [options] [target] ...
-	@echo Usage: env KEY=\"VALUE\" make [options] -- [target] ...
+	@echo Usage: VARIABLE=\"VALUE\" make [options] -- [target] ...
 	@echo
-	@echo This makefile allows you to build a Vagrant box file from a template and
+	@echo This Makefile allows you to build a Vagrant box file from a template and
 	@echo with Packer.
 	@echo
 	@echo Targets:
@@ -149,6 +149,19 @@ _usage:
 	@echo "                            the box file. It will output a minimal       " 
 	@echo "                            Vagrantfile source that can be used for      "
 	@echo "                            testing the build before release.            "
+	@echo
+	@echo "Variables (default value):"
+	@echo "  - BOX_ARCH (x86_64)       The architecture, x86_64 or i386, required.  "
+	@echo "  - BOX_DEBUG (false)       Set to true to build in packer debug mode.   "
+	@echo "  - BOX_LANG (en_US)        The locale code, used to build a box with    "
+	@echo "                            an additonal locale to en_US. e.g. en_GB     "
+	@echo "  - BOX_MINOR_RELEASE (6.8) The CentOS-6 Minor release number. Note: A   "
+	@echo "                            corresponding template is required.          "
+	@echo "  - BOX_OUTPUT_PATH         Ouput directory path - where the final build "
+	@echo "    (./builds)              artifacts are placed."
+	@echo "  - BOX_VARIANT (minimal)   Used to specify box build variants. i.e.     "
+	@echo "                             - minimal                                   "
+	@echo "                             - minimal-cloud-init                        "
 	@echo
 
 all: _prerequisites | build install
