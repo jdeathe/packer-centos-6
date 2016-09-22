@@ -1,6 +1,43 @@
 export SHELL := /usr/bin/env bash
 export PATH := ${PATH}
 
+define USAGE
+Usage: make [options] [target] ...
+Usage: VARIABLE="VALUE" make [options] -- [target] ...
+
+This Makefile allows you to build a Vagrant box file from a template and
+with Packer.
+
+Targets:
+  all                       Combines targets build and install.
+  build                     Runs the packer build job. This is the
+                            default target.
+  download-iso              Download the source ISO image - required to
+                            build the Virtual Machine. Packer should
+                            be capable of downloading the source however
+                            this feature can fail.
+  help                      Show this help.
+  install                   Used to install the Vagrant box with a
+                            unique name based on the sha1 sum of
+                            the box file. It will output a minimal
+                            Vagrantfile source that can be used for
+                            testing the build before release.
+
+Variables (default value):
+  - BOX_ARCH (x86_64)       The architecture, x86_64 or i386, required.
+  - BOX_DEBUG (false)       Set to true to build in packer debug mode.
+  - BOX_LANG (en_US)        The locale code, used to build a box with
+                            an additonal locale to en_US. e.g. en_GB
+  - BOX_MINOR_RELEASE       The CentOS-6 Minor release number. Note: A
+    (6.8)                   corresponding template is required.
+  - BOX_OUTPUT_PATH         Ouput directory path - where the final build
+    (./builds)              artifacts are placed.
+  - BOX_VARIANT (minimal)   Used to specify box build variants. i.e.
+                              - minimal
+                              - minimal-cloud-init
+
+endef
+
 BOX_NAMESPACE := jdeathe
 BOX_PROVIDOR := virtualbox
 BOX_ARCH_PATTERN := ^(x86_64|i386)$
@@ -19,35 +56,35 @@ COLOUR_RESET := \033[0m
 CHARACTER_STEP := ==>
 PREFIX_STEP := $(shell \
 	printf -- '%s ' \
-	"$(CHARACTER_STEP)"; \
+		"$(CHARACTER_STEP)"; \
 )
 PREFIX_SUB_STEP := $(shell \
 	printf -- ' %s ' \
-	"$(CHARACTER_STEP)"; \
+		"$(CHARACTER_STEP)"; \
 )
 PREFIX_STEP_NEGATIVE := $(shell \
 	printf -- '%b%s%b' \
-	"$(COLOUR_NEGATIVE)" \
-	"$(PREFIX_STEP)" \
-	"$(COLOUR_RESET)"; \
+		"$(COLOUR_NEGATIVE)" \
+		"$(PREFIX_STEP)" \
+		"$(COLOUR_RESET)"; \
 )
 PREFIX_STEP_POSITIVE := $(shell \
 	printf -- '%b%s%b' \
-	"$(COLOUR_POSITIVE)" \
-	"$(PREFIX_STEP)" \
-	"$(COLOUR_RESET)"; \
+		"$(COLOUR_POSITIVE)" \
+		"$(PREFIX_STEP)" \
+		"$(COLOUR_RESET)"; \
 )
 PREFIX_SUB_STEP_NEGATIVE := $(shell \
 	printf -- '%b%s%b' \
-	"$(COLOUR_NEGATIVE)" \
-	"$(PREFIX_SUB_STEP)" \
-	"$(COLOUR_RESET)"; \
+		"$(COLOUR_NEGATIVE)" \
+		"$(PREFIX_SUB_STEP)" \
+		"$(COLOUR_RESET)"; \
 )
 PREFIX_SUB_STEP_POSITIVE := $(shell \
 	printf -- '%b%s%b' \
-	"$(COLOUR_POSITIVE)" \
-	"$(PREFIX_SUB_STEP)" \
-	"$(COLOUR_RESET)"; \
+		"$(COLOUR_POSITIVE)" \
+		"$(PREFIX_SUB_STEP)" \
+		"$(COLOUR_RESET)"; \
 )
 
 .DEFAULT_GOAL := build
@@ -129,40 +166,7 @@ _require-supported-architecture:
 		fi
 
 _usage:
-	@echo Usage: make [options] [target] ...
-	@echo Usage: VARIABLE=\"VALUE\" make [options] -- [target] ...
-	@echo
-	@echo This Makefile allows you to build a Vagrant box file from a template and
-	@echo with Packer.
-	@echo
-	@echo Targets:
-	@echo "  all                       Combines targets build and install.          "
-	@echo "  build                     Runs the packer build job. This is the       "
-	@echo "                            default target.                              "
-	@echo "  download-iso              Download the source ISO image - required to  "
-	@echo "                            build the Virtual Machine. Packer should     "
-	@echo "                            be capable of downloading the source however "
-	@echo "                            this feature can fail.                       "
-	@echo "  help                      Show this help.                              "
-	@echo "  install                   Used to install the Vagrant box with a       " 
-	@echo "                            unique name based on the sha1 sum of         "
-	@echo "                            the box file. It will output a minimal       " 
-	@echo "                            Vagrantfile source that can be used for      "
-	@echo "                            testing the build before release.            "
-	@echo
-	@echo "Variables (default value):"
-	@echo "  - BOX_ARCH (x86_64)       The architecture, x86_64 or i386, required.  "
-	@echo "  - BOX_DEBUG (false)       Set to true to build in packer debug mode.   "
-	@echo "  - BOX_LANG (en_US)        The locale code, used to build a box with    "
-	@echo "                            an additonal locale to en_US. e.g. en_GB     "
-	@echo "  - BOX_MINOR_RELEASE (6.8) The CentOS-6 Minor release number. Note: A   "
-	@echo "                            corresponding template is required.          "
-	@echo "  - BOX_OUTPUT_PATH         Ouput directory path - where the final build "
-	@echo "    (./builds)              artifacts are placed."
-	@echo "  - BOX_VARIANT (minimal)   Used to specify box build variants. i.e.     "
-	@echo "                             - minimal                                   "
-	@echo "                             - minimal-cloud-init                        "
-	@echo
+	@: $(info $(USAGE))
 
 all: _prerequisites | build install
 
