@@ -1,11 +1,11 @@
 {
   "variables": {
     "build_export_format": "ovf",
-    "build_iso_checksum": "ec49c297d484b9da0787e5944edc38f7c70f21c0f6a60178d8e9a8926d1949f4",
-    "build_iso_checksum_type": "sha256",
-    "build_iso_filename": "CentOS-6.8-x86_64-minimal.iso",
+    "build_iso_checksum": "b23d4d996d2cb5b370120588d5ea18a9cfba7881",
+    "build_iso_checksum_type": "sha1",
+    "build_iso_filename": "CentOS-6.9-x86_64-minimal.iso",
     "build_iso_target_path": "isos/x86_64",
-    "build_name": "CentOS-6.8-x86_64-minimal-cloud-init-en_US",
+    "build_name": "CentOS-6.9-x86_64-minimal-cloud-init-en_US",
     "build_output_directory": "builds",
     "guest_boot_timeout": "0",
     "guest_bootloader_append": "",
@@ -17,7 +17,7 @@
     "guest_lv_root_fstype": "ext4",
     "guest_lv_root_size": "1024",
     "guest_lv_swap_size": "4096",
-    "guest_name": "CentOS-6.8-x86_64-minimal-cloud-init-en_US",
+    "guest_name": "CentOS-6.9-x86_64-minimal-cloud-init-en_US",
     "guest_partition_boot_fstype": "ext4",
     "guest_partition_boot_size": "250",
     "guest_memory": "512",
@@ -112,29 +112,21 @@
       "compression_level": 9,
       "keep_input_artifact": true
     },
-    [
-      {
-        "type": "artifice",
-        "files": [
-          "CentOS-6.Vagrantfile"
-        ]
-      },
-      {
-        "type": "shell-local",
-        "execute_command": "chmod +x {{.Path}}; {{.Vars}} /bin/bash {{.Path}}",
-        "inline_shebang": "/bin/bash -e",
-        "inline": [
-          "if [[ ! -d output-tmp ]]; then",
-          "   mkdir output-tmp",
-          "fi",
-          "if [[ -n ${1} ]] && [[ -f ${1} ]]; then",
-          "  echo '--> Generating Vagrantfile template.'",
-          "  cp -pf ${1} output-tmp/${1}",
-          "  sed -e 's~[{][{]user `ssh_user`[}][}]~{{user `ssh_user`}}~g' output-tmp/${1} > ${1}",
-          "fi"
-        ]
-      }
-    ],
+    {
+      "type": "shell-local",
+      "execute_command": "chmod +x \"{{.Script}}\"; {{.Vars}} /bin/bash \"{{.Script}}\" CentOS-6.Vagrantfile",
+      "inline_shebang": "/bin/bash -e",
+      "inline": [
+        "if [[ ! -d output-tmp ]]; then",
+        "   mkdir output-tmp",
+        "fi",
+        "if [[ -n ${1} ]] && [[ -f ${1} ]]; then",
+        "  echo '--> Generating Vagrantfile template.'",
+        "  cp -pf ${1} output-tmp/${1}",
+        "  sed -e 's~[{][{]user `ssh_user`[}][}]~{{user `ssh_user`}}~g' output-tmp/${1} > ${1}",
+        "fi"
+      ]
+    },
     {
       "type": "vagrant",
       "vagrantfile_template": "CentOS-6.Vagrantfile",
@@ -142,27 +134,19 @@
       "compression_level": 9,
       "keep_input_artifact": true
     },
-    [
-      {
-        "type": "artifice",
-        "files": [
-          "output-tmp/CentOS-6.Vagrantfile"
-        ]
-      },
-      {
-        "type": "shell-local",
-        "execute_command": "chmod +x {{.Path}}; {{.Vars}} /bin/bash {{.Path}}",
-        "inline_shebang": "/bin/bash -e",
-        "inline": [
-          "if [[ -n ${1} ]] && [[ -f ${1} ]]; then",
-          "  echo '--> Restoring Vagrantfile template.'",
-          "  mv -f ${1} .",
-          "fi",
-          "echo '--> Cleanup output directories.'",
-          "find . -mindepth 1 -maxdepth 1 -type d -name \"output-*\" -exec rm -rf '{}' +"
-        ]
-      }
-    ]
+    {
+      "type": "shell-local",
+      "execute_command": "chmod +x \"{{.Script}}\"; {{.Vars}} /bin/bash \"{{.Script}}\" CentOS-6.Vagrantfile",
+      "inline_shebang": "/bin/bash -e",
+      "inline": [
+        "if [[ -n ${1} ]] && [[ -f output-tmp/${1} ]]; then",
+        "  echo '--> Restoring Vagrantfile template.'",
+        "  mv -f output-tmp/${1} .",
+        "fi",
+        "echo '--> Cleanup output directories.'",
+        "find . -mindepth 1 -maxdepth 1 -type d -name \"output-*\" -exec rm -rf '{}' +"
+      ]
+    }
   ],
   "provisioners": [
     {
