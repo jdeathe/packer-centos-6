@@ -29,7 +29,7 @@ Variables (default value):
   - BOX_LANG (en_US)        The locale code, used to build a box with
                             an additonal locale to en_US. e.g. en_GB
   - BOX_MINOR_RELEASE       The CentOS-6 Minor release number. Note: A
-    (6.8)                   corresponding template is required.
+    (6.9)                   corresponding template is required.
   - BOX_OUTPUT_PATH         Ouput directory path - where the final build
     (./builds)              artifacts are placed.
   - BOX_VARIANT (minimal)   Used to specify box build variants. i.e.
@@ -45,7 +45,7 @@ BOX_ARCH_PATTERN := ^(x86_64|i386)$
 BOX_ARCH ?= x86_64
 BOX_DEBUG ?= false
 BOX_LANG ?= en_US
-BOX_MINOR_RELEASE ?= 6.8
+BOX_MINOR_RELEASE ?= 6.9
 BOX_OUTPUT_PATH ?= ./builds
 BOX_VARIANT ?= minimal
 
