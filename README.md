@@ -2,7 +2,13 @@
 
 This provides the configuration and Makefile to build a [Vagrant](https://www.vagrantup.com) minimal base box using [Packer](https://www.packer.io). The base box is intended for server (terminal) use only so is restricted to a single locale (with `en_US` being the default) which allows for a smaller box size.
 
-There are templates provided for `CentOS-6.7`, `CentOS-6.8` and `CentOS-6.9` with architectures `i386` and `x86_64`. There is currently no requirement to support older minor release versions or alternative architectures but they could be added if necessary.
+There are templates provided for the following with `x86_64` and `i386` architecture:
+- CentOS-6.10
+- CentOS-6.9
+- CentOS-6.8
+- CentOS-6.7
+
+There is currently no requirement to support older minor release versions or alternative architectures but they could be added if necessary.
 
 ## Usage Instructions
 
@@ -12,9 +18,9 @@ The build environment required is Mac OSX or GNU Linux.
 
 To build the box file you will need the following installed:
 
-- [VirtualBox](https://www.virtualbox.org) (5.1.22)
-- [Vagrant](https://www.vagrantup.com) (1.9.5)
-- [Packer](https://www.packer.io) (1.0.0)
+- [VirtualBox](https://www.virtualbox.org) (6.0.10)
+- [Vagrant](https://www.vagrantup.com) (2.2.5)
+- [Packer](https://www.packer.io) (1.4.3)
 
 ### Build
 
@@ -32,7 +38,7 @@ $ BOX_ARCH=i386 BOX_MINOR_RELEASE=6.7 make
 
 #### Box Variants
 
-To build a box variant from an alternative box template use `BOX_VARIANT`. The default is `minimal` but there is now an alternative `minimal-cloud-init` template to build boxes that include Cloud-Init.
+To build a box variant from an alternative box template use `BOX_VARIANT`. The default is `minimal` but there's an alternative `minimal-cloud-init` template to build boxes that include Cloud-Init.
 
 ```
 $ BOX_VARIANT=minimal-cloud-init BOX_MINOR_RELEASE=6.7 make
