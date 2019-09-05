@@ -1,11 +1,11 @@
 {
   "variables": {
     "build_export_format": "ovf",
-    "build_iso_checksum": "b23d4d996d2cb5b370120588d5ea18a9cfba7881",
+    "build_iso_checksum": "9cecc12a66c4f9a4225d18fe0aaab412ba367549",
     "build_iso_checksum_type": "sha1",
-    "build_iso_filename": "CentOS-6.9-x86_64-minimal.iso",
+    "build_iso_filename": "CentOS-6.10-x86_64-minimal.iso",
     "build_iso_target_path": "isos/x86_64",
-    "build_name": "CentOS-6.9-x86_64-minimal-en_US",
+    "build_name": "CentOS-6.10-x86_64-minimal-en_US",
     "build_output_directory": "builds",
     "guest_boot_timeout": "0",
     "guest_bootloader_append": "",
@@ -17,7 +17,7 @@
     "guest_lv_root_fstype": "ext4",
     "guest_lv_root_size": "1024",
     "guest_lv_swap_size": "4096",
-    "guest_name": "CentOS-6.9-x86_64-minimal-en_US",
+    "guest_name": "CentOS-6.10-x86_64-minimal-en_US",
     "guest_partition_boot_fstype": "ext4",
     "guest_partition_boot_size": "250",
     "guest_memory": "512",
@@ -40,7 +40,7 @@
       "name": "{{user `build_name`}}",
       "boot_command": [
         "<esc><wait>",
-        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/CentOS-6-minimal.cfg",
+        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-6-minimal.cfg",
         " BOOT_TIMEOUT={{user `guest_boot_timeout`}}",
         " BOOTLOADER_APPEND=\"{{user `guest_bootloader_append`}}\"",
         " BOOTLOADER_THEME=details",
@@ -91,8 +91,7 @@
         ["modifyvm","{{.Name}}","--clipboard","disabled"],
         ["modifyvm","{{.Name}}","--draganddrop","disabled"],
         ["modifyvm","{{.Name}}","--usb","off"],
-        ["modifyvm","{{.Name}}","--audio","none"],
-        ["modifyvm","{{.Name}}","--videocap","off"]
+        ["modifyvm","{{.Name}}","--audio","none"]
       ],
       "vboxmanage_post": [
         ["modifyvm","{{.Name}}","--cpus","{{user `guest_cpus`}}"],

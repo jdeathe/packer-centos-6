@@ -1,0 +1,16 @@
+{
+	"build_iso_checksum": "9cecc12a66c4f9a4225d18fe0aaab412ba367549",
+	"build_iso_checksum_type": "sha1",
+	"build_iso_filename": "CentOS-6.10-x86_64-minimal.iso",
+	"build_iso_target_path": "isos/x86_64",
+	"build_name": "CentOS-6.10-x86_64-minimal-en_US",
+	"guest_hard_disk_size": "40960",
+	"guest_keyboard": "us",
+	"guest_language": "en_US.UTF-8",
+	"guest_lv_swap_size": "4096",
+	"guest_name": "CentOS-6.10-x86_64-minimal-en_US",
+	"guest_partition_boot_size": "250",
+	"guest_memory": "512",
+	"guest_selinux": "permissive",
+	"guest_vg_root_reserved_space": "0"
+}
